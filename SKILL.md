@@ -44,7 +44,7 @@ Ask only for information that materially affects irreversible or public-facing a
 Create a concise plan covering only allowed documentation and metadata work:
 
 - README improvements using the `create-readme` skill as the basis for structure, tone, and GitHub-flavored Markdown.
-- Bilingual README by default: after the primary (English) README is finalized, produce a Chinese version via the `baoyu-translate` skill, saved as `README.zh-CN.md`, and cross-link the two.
+- Bilingual README by default: after the primary (English) README is finalized, produce a Chinese version saved as `README.zh-CN.md` and cross-link the two. Author the mirror directly; reserve the `baoyu-translate` skill for long or terminology-dense docs where global term consistency matters.
 - Community health files: MIT license by default, contributing guide, code of conduct, security policy, support guide, changelog, citation, governance, issue templates, PR template.
 - Repository hygiene: `.gitignore`, `.gitattributes`, `.editorconfig`, docs index, examples index, badges, project description, topics, funding/sponsor metadata if relevant.
 - Git/GitHub setup: initialize Git if absent, create public remote if absent, set default branch, and push documentation-only changes after safety checks.
@@ -64,7 +64,7 @@ Use the `create-readme` skill for README creation or refresh. Ensure the README 
 After the English `README.md` is finalized, produce a Chinese translation by default:
 
 - The English `README.md` must include a language-switch line near the top by default, e.g. `English | [简体中文](README.zh-CN.md)`. Add it even when the Chinese file is still being generated in the same run — the link points to the path that will exist when the workflow completes.
-- Invoke the `baoyu-translate` skill to translate `README.md` into Chinese, writing the result to `README.zh-CN.md`.
+- Produce the Chinese `README.zh-CN.md` from `README.md`. Authoring the mirror directly is preferred for a typical README (mostly short prose plus code/commands that must stay verbatim); invoke the `baoyu-translate` skill only when the README is long or terminology-dense and benefits from its analyze/translate/review flow and a shared glossary.
 - The Chinese `README.zh-CN.md` carries the mirror switch line at the top, e.g. `[English](README.md) | 简体中文`.
 - Keep all code blocks, commands, paths, links, badges, and placeholders unchanged; translate only prose.
 - Skip the Chinese version only if the user explicitly opts out. If the project is already authored primarily in Chinese, treat `README.md` as the Chinese version, translate into `README.en.md`, and put the corresponding switch line at the top of each file.

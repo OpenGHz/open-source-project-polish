@@ -13,7 +13,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   guide, code of conduct, security policy, support guide, issue/PR templates,
   and repository hygiene files (`.gitignore`, `.gitattributes`, `.editorconfig`).
 
-### Notes
+### Changed
 
-- The skill itself (`SKILL.md`) is the project's core and was not modified as
-  part of preparing this open source baseline.
+- `SKILL.md`: the bilingual README step now authors the Chinese mirror directly
+  by default and treats the `baoyu-translate` skill as optional — reserved for
+  long or terminology-dense docs — instead of mandating it for every README.
