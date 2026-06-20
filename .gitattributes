@@ -1,0 +1,14 @@
+# Normalize line endings to LF on checkin
+* text=auto eol=lf
+
+# Markdown and docs are text
+*.md   text
+*.yml  text
+*.yaml text
+
+# Mark common binaries so diffs/merges don't mangle them
+*.png  binary
+*.jpg  binary
+*.jpeg binary
+*.gif  binary
+*.pdf  binary
