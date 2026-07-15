@@ -17,6 +17,7 @@ Transform an existing project folder into a high-quality open source repository 
 - Never include user-specific local machine paths in README or public docs, such as `/home/<user>/...`, `/Users/<user>/...`, drive-letter paths, personal workspace names, download folders, or machine-specific absolute project paths. Use relative paths, `$HOME`, `<repo>`, or placeholders instead.
 - Default to MIT licensing when no license exists and no user preference overrides it.
 - Default to automated public GitHub publication for folders without a Git remote. Determine the target owner/name if not obvious, then create a public remote and push documentation-only changes after secrets checks pass.
+- When `gh` is authenticated, configuring low-risk GitHub repository settings is in scope and enabled by default, whether the remote was just created or already existed: set the repository description, homepage, and topics, and **enable Discussions** (the generated `SUPPORT.md` links to it, so it should exist). Do not disable existing features, change visibility, or alter branch-protection/security settings without an explicit request.
 - If a network/GitHub command fails, retry once with the configured local proxy before declaring the remote step blocked.
 - Preserve existing docs and community files where possible; improve them incrementally rather than replacing useful content.
 
@@ -47,7 +48,7 @@ Create a concise plan covering only allowed documentation and metadata work:
 - Bilingual README by default: after the primary (English) README is finalized, produce a Chinese version saved as `README.zh-CN.md` and cross-link the two. Author the mirror directly; reserve the `baoyu-translate` skill for long or terminology-dense docs where global term consistency matters.
 - Community health files: MIT license by default, contributing guide, code of conduct, security policy, support guide, changelog, citation, governance, issue templates, PR template.
 - Repository hygiene: `.gitignore`, `.gitattributes`, `.editorconfig`, docs index, examples index, badges, project description, topics, funding/sponsor metadata if relevant.
-- Git/GitHub setup: initialize Git if absent, create public remote if absent, set default branch, and push documentation-only changes after safety checks.
+- Git/GitHub setup: initialize Git if absent, create public remote if absent, set default branch, and push documentation-only changes after safety checks. When `gh` is available, set the repository description/homepage/topics and enable Discussions by default.
 
 ### 3. Improve README
 
@@ -119,6 +120,24 @@ If network commands fail, retry once with:
 export {HTTP_PROXY,HTTPS_PROXY,ALL_PROXY,http_proxy,https_proxy,all_proxy}=http://127.0.0.1:7890
 ```
 
+### 6a. Configure Repository Features (when `gh` is available)
+
+Whether the remote was just created or already existed, when `gh` is authenticated, configure standard repository metadata and features by default. These changes are low-risk and reversible:
+
+- Set the description, homepage, and relevant topics for discoverability:
+  ```bash
+  gh repo edit OWNER/REPO \
+    --description "One-line value proposition." \
+    --homepage "https://example.org/or/pypi/url" \
+    --add-topic TOPIC1 --add-topic TOPIC2
+  ```
+- Enable Discussions by default, because the generated `SUPPORT.md` points contributors there and the link should resolve. There is no dedicated `gh` subcommand, so use the API endpoint:
+  ```bash
+  gh api --method PATCH repos/OWNER/REPO -F has_discussions=true --jq '.has_discussions'
+  ```
+
+Skip a feature only when it is already enabled/set or the user opts out; verify with `gh repo view OWNER/REPO --json description,repositoryTopics,hasDiscussionsEnabled`. If `gh` is unavailable or unauthenticated, list these as manual steps in the completion summary instead of performing them.
+
 ### 7. Quality Checks
 
 Before finalizing:
@@ -138,7 +157,8 @@ Before finalizing:
 - No verified install/test commands: include clearly marked placeholders or "not yet documented" notes instead of inventing commands.
 - License unknown: add MIT by default unless the user requests a different license.
 - Possible secrets or private data: stop remote creation/push and report the risky paths.
-- No `gh` CLI or not authenticated: provide exact commands for the user to run, but still complete local docs polish and prepare a documentation-only commit if safe.
+- `gh` available and authenticated: set description/homepage/topics and enable Discussions by default as part of setup, since generated docs (e.g. `SUPPORT.md`) reference Discussions; verify each is not already set before changing it.
+- No `gh` CLI or not authenticated: provide exact commands for the user to run (including the repository-feature commands from step 6a), but still complete local docs polish and prepare a documentation-only commit if safe.
 - Monorepo: create or update root community files and per-package README files only when package boundaries are clear.
 
 ## Completion Summary
@@ -149,4 +169,5 @@ End with:
 - What was intentionally not touched, especially source code.
 - Validation performed.
 - Remote repository status, if applicable.
-- Suggested next steps such as enabling CI, adding examples, cutting a first release, or creating project topics.
+- Repository features configured via `gh` (description, homepage, topics, Discussions), or the exact commands to run when `gh` is unavailable.
+- Suggested next steps such as enabling CI, adding examples, or cutting a first release.
